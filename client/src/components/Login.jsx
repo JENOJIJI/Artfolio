@@ -1,17 +1,20 @@
 import React from 'react';
-import GoogleLogin from 'react-google-login';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import shareVideo from '../assets/share.mp4';
 import logo from '../assets/logowhite.png';
-
+import { GoogleLogin } from '@react-oauth/google';
 import { client } from '../client';
 
 const Login = () => {
   const navigate = useNavigate();
   const responseGoogle = (response) => {
-    localStorage.setItem('user', JSON.stringify(response.profileObj));
-    const { name, googleId, imageUrl } = response.profileObj;
+    const profileData = atob(response.credential.split(".")[1])
+    localStorage.setItem('user', JSON.stringify(response));
+    // const { name, googleId, imageUrl } = profileData.;
+    const name = profileData.name
+    const googleId = profileData.aud 
+    const imageUrl = profileData.picture
     const doc = {
       _id: googleId,
       _type: 'user',
@@ -43,7 +46,6 @@ const Login = () => {
 
           <div className="shadow-2xl">
             <GoogleLogin
-              clientId={`${process.env.REACT_APP_GOOGLE_API_TOKEN}`}
               render={(renderProps) => (
                 <button
                   type="button"
@@ -56,7 +58,7 @@ const Login = () => {
               )}
               onSuccess={responseGoogle}
               onFailure={responseGoogle}
-              cookiePolicy="single_host_origin"
+              // cookiePolicy="single_host_origin"
             />
           </div>
         </div>
